@@ -4,7 +4,7 @@ A simple class to assist with creating control schemes with keyboard inputs for 
 
 
 ### Demo
-[https://retrovx.github.io/phaser3-controls/](https://retrovx.github.io/phaser3-controls/)
+Demo and docs can be found in the docs folder.
 
 ## Getting Started
 
