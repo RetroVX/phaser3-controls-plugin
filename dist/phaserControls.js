@@ -10,9 +10,6 @@
  * @param {Phaser.Scene} scene - The Scene the phaserControls will be created in (this)
  */
 
-// global schemes array so when switching scenes you do not lose your setup schemes
-let schemes = [];
-
 export default class phaserControls {
 
     constructor(scene) {
@@ -32,12 +29,9 @@ export default class phaserControls {
          * @name phaserControls.schemes
          * @type {Array}
          * @since 1.0.0
-         * @example
-         * this.controls.schemes
-         * // [{name: "azerty", controls: {…}, active: false}{}{}]
          */  
 
-        this.schemes = schemes;
+        this.schemes = [];
 
 
         /**
@@ -45,62 +39,9 @@ export default class phaserControls {
          * @name phaserControls.keys
          * @type {Object}
          * @since 1.0.0
-         * @example
-         * this.controls.keys
-         * // {up: keyInfo, down: keyInfo, left: keyInfo, down: keyInfo}
-         * this.controls.keys.up.isDown 
-         * this.controls.keys.down.isDown
          */ 
 
         this.keys = null;
-
-        // set scheme active
-        if(schemes.length > 0) this.setActive(schemes[0]);
-
-
-
-        /**
-         * Config example to pass into phaserControls
-         * @method Config
-         * @type {Object}
-         * @since 1.0.0
-         * @namespace
-         * @property {string} name - The name of the control scheme
-         * @property {object} controls - Controls names and keys to use
-         * @property {string} active - Whether to set this control scheme to active
-         * @example
-         * const config = {
-         *     name: 'azertyKeys',
-         * 
-         *     controls: {
-         *         up: 'Z',
-         *         down: 'S',
-         *         left: 'Q',
-         *         right: 'D',
-         *         shift: 'SHIFT',
-         *         space: 'SPACE',
-         *     },
-         * 
-         *     active: false,
-         * }
-         */   
-
-        const config = {
-
-            name: '',
-             
-            controls: {
-                up: '',
-                down: '',
-                left: '',
-                right: '',
-                shift: '',
-                space: '',
-            },
-             
-            active: false,
-        }
-
 
     }
 
@@ -109,8 +50,6 @@ export default class phaserControls {
     * Create default cursor keys.  
     * The difference between this.input.keyboard.createCursorKeys(); and phaserControls.createCursorKeys();
     * is that the phaserControls will be added to the control scheme array with other created control schemes.
-    * @example
-    * this.controls.createCursorKeys();
     * @method phaserControls.createCursorKeys
     * @type {function}
     * @param {boolean} [active=false] - If the cursor keys should be used, overiding current scheme
@@ -154,8 +93,6 @@ export default class phaserControls {
 
     /**
     * Create default wasd keys. The same approach as phaserControls.createCursorKeys but using WASD instead.
-    * @example
-    * this.controls.createWasdKeys();
     * @method phaserControls.createWasdKeys
     * @type {function}
     * @param {boolean} [active=false] - If the wasd keys should be used, overiding current scheme
@@ -204,14 +141,11 @@ export default class phaserControls {
     * @type {function}
     * @param {object} config - A new scheme config to be added to the schemes array
     * @since 1.0.0
-    * @example
-    * this.controls.add(config);
     */
 
     add(config) {
         // add new control scheme
         this.schemes.push(config);
-        schemes = this.schemes;
 
         // if new control scheme is set to 'active' then switch
         if (config.active) {
@@ -227,8 +161,6 @@ export default class phaserControls {
     * @type {function}
     * @param {Array} array - An array of control scheme objects
     * @since 1.0.0
-    * @example
-    * this.controls.addMultiple({config}, {config}, {config});
     */
 
     addMultiple(array) {
@@ -237,7 +169,6 @@ export default class phaserControls {
             // get schemes from passed in array and add to the phaserControls.schemes array
             array.forEach(function(config, index){
                 this.schemes.push(config);
-                schemes = this.schemes;
 
                 if(config.active) {
                     this.setActive(config);
@@ -255,9 +186,6 @@ export default class phaserControls {
     * @param {boolean} [active=false] - if the scheme should be used, overiding current scheme
     * @return {Object} The control scheme object
     * @since 1.0.0
-    * @example
-    * this.controls.get('azerty');
-    * // {name: "azerty", controls: {…}, active: false}
     */
 
     get(name, active) {
@@ -288,9 +216,6 @@ export default class phaserControls {
     * @param {boolean} [name=false] - If true returns only the schemes name
     * @return {(Object|string)} The control scheme object or string
     * @since 1.0.0
-    * @example
-    * this.controls.getActive();
-    * // {name: "newKeyScheme", controls: {…}, active: true}
     */
 
     getActive(name) {
@@ -308,6 +233,35 @@ export default class phaserControls {
 
     }
 
+    /**
+     * returns an array with all the control schemes
+     * @method phaserControls.getAll
+     * @type {function}
+     * @since 1.1.0
+    */
+
+    getAll() {
+        return this.schemes;
+    }
+
+
+    /**
+     * Switch from one control scheme to another  
+     * Alternative way of get().setActive();
+     * @method phaserControls.getAll
+     * @type {function}
+     * @param {(string|Object)} oldScheme - the current scheme being used
+     * @param {(string|object)} newScheme - the control scheme to switch to
+     * @since 1.1.0
+    */
+   
+    switch(oldScheme, newScheme) {
+        if (newScheme === undefined || newScheme === null) return console.error('phaserControls.switch : Parameter "newScheme" is undefined');
+
+        // setActive will automatically switch the old and new schemes
+        this.setActive(newScheme);
+    }
+
 
     /**
     * Select control scheme while turning off the currently used scheme
@@ -315,9 +269,6 @@ export default class phaserControls {
     * @type {function}
     * @param {(string|Object)} scheme - the 'name' or object of a scheme to be selected
     * @since 1.0.0
-    * @example
-    * // set 'azerty' control scheme active
-    * this.controls.setActive('azerty');
     */
 
     setActive(scheme) {
@@ -348,8 +299,6 @@ export default class phaserControls {
     * @param {(string|object)} scheme - The scheme name to find and edit
     * @param {Object} config - config to edit
     * @since 1.0.0
-    * @example
-    * this.controls.edit('azerty', newConfig);
     */
 
     edit(scheme, config) {
@@ -370,8 +319,6 @@ export default class phaserControls {
     * @param {(string|object)} scheme - The scheme name to find and delete
     * @param {boolean} destroy - Removes keys and captures used by scheme (phaser version >= 3.16)
     * @since 1.0.0
-    * @example
-    * this.controls.delete('azerty');
     */
 
     delete(scheme, destroy) {
@@ -418,8 +365,6 @@ export default class phaserControls {
     * @param {number} fontsize - Fontsize to display the text at.
     * @param {string} color - font color.
     * @since 1.0.0
-    * @example
-    * this.controls.debugText(100, 100, 20, '#000000');
     */
 
     debugText(x, y, fontsize, color) {

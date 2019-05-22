@@ -1,7 +1,20 @@
 # Phaser 3 Controls CHANGELOG
 
+### VERSION 1.1.0
 
-### version 1.0.0
+* fixed the schemes array from testing
+* cleanup of phaserControls.js for readability
+* Added getAll() function that returns all the control schemes added to phaserControls 
+* Added switch(oldScheme, newScheme) function as an alternative to get(scheme, true) or setActive()
+* updated README.md to reflect changes
+
+
+### VERSION 1.0.1
+
+* minor cleanup of phaserControls.js
+
+
+### VERSION 1.0.0
 
 * phaserControls.js
 * First attempt at using jsDoc

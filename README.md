@@ -4,7 +4,7 @@ A simple class to assist with creating control schemes with keyboard inputs for 
 
 
 ### Demo
-Demo and docs can be found in the docs folder.
+[https://retrovx.github.io/phaser3-controls/](https://retrovx.github.io/phaser3-controls/)
 
 ## Getting Started
 
@@ -16,30 +16,6 @@ git clone https://github.com/RetroVX/phaser3-controls.git
 Or download from Zip
 
 #### Import into a Phaser scene
-
-index.html
-```html
-<script type="text/javascript" src="lib/phaser.js"></script>
-<script src="game.js" type="module"></script>
-```
-
-game.js
-```javascript
-import levelScene from "./levelScene.js";
-
-const config = {
-    type: Phaser.AUTO,
-    width: 800,
-    height: 600,
-    parent: "gameCanvas",
-    scene: levelScene,
-
-};
-
-const game = new Phaser.Game(config);
-```
-
-levelscene.js
 
 ```javascript
 import phaserControls from "./phaserControls.js";
@@ -112,7 +88,7 @@ this.controls.keys
 ##### Access Control Schemes
 ```javascript
 // returns schemes array
-this.controls.schemes;
+this.controls.getAll();
 ```
 
 ##### Create WASD keys (w,a,s,d, shift, space) or CURSOR keys (up, down, left, right, shift, space)
@@ -142,6 +118,12 @@ let currentScheme = this.controls.getActive();
 // scheme - pass in either the control scheme name string or object
 this.controls.setActive(scheme);
 ```
+Or
+```javascript
+// only needs the newScheme paramter to be set
+this.controls.switch(oldScheme, newScheme);
+```
+
 
 ##### Edit control scheme
 ```javascript
