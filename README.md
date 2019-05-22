@@ -1,6 +1,6 @@
-# Phaser 3 Controls
+# Phaser 3 Controls Plugin
 
-A simple class to assist with creating control schemes with keyboard inputs for Phaser 3
+A simple plugin to assist with creating control schemes with keyboard inputs for Phaser 3
 
 
 ### Demo
@@ -16,7 +16,43 @@ git clone https://github.com/RetroVX/phaser3-controls.git
 ```
 Or download from Zip
 
+#### Install as a global scene plugin
+
+Use phaserControlsPlugin.js or phaserControlsPlugin.min.js  
+
+game config  
+```javascript
+import levelScene from "./scenes/levelScene.js";
+import phaserControls from "./../dist/phaserControls.js";
+
+const config = {
+    type: Phaser.AUTO,
+    width: 800,
+    height: 400,
+    plugins: {
+    scene: [
+        { key: 'phaserControls', plugin: phaserControls, mapping: 'controls' }
+    ]
+    },
+    parent: "gameCanvas",
+    scene: [levelScene],
+};
+
+const game = new Phaser.Game(config);
+```
+
+levelScene.js
+```javascript
+// You can now access the plugin from any scene using this.controls
+this.controls
+```
+
+Or
+
 #### Import into a Phaser scene
+
+Use phaserControls.js or phaserControls.min.js  
+
 
 ```javascript
 import phaserControls from "./phaserControls.js";
@@ -24,8 +60,6 @@ import phaserControls from "./phaserControls.js";
 // pass scene instance
 this.controls = new phaserControls(this);
 ```
-
-Full example of levelScene.js below.
 
 #### Config
 [Phaser 3 keyCodes docs](https://github.com/photonstorm/phaser/blob/v3.16.2/src/input/keyboard/keys/KeyCodes.js)
@@ -165,7 +199,6 @@ this.controls.debugText(200, 200, 20);
 #### levelScene.js Example
 
 ```javascript
-import phaserControls from "./phaserControls.js";
 
 export default class levelScene extends Phaser.Scene {
     constructor() {
@@ -179,8 +212,6 @@ export default class levelScene extends Phaser.Scene {
     create() {
 
         this.player = this.add.sprite(400, 400, 'player');
-
-        this.controls = new phaserControls(this);
 
         const config = {
             name: 'cursorKeys',

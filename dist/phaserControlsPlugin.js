@@ -2,17 +2,21 @@
  * @author Conor Irwin <conorirwin.co.uk> 
  * @classdesc 
  * GitHub: https://github.com/retroVX/phaser3-controls <br>
- * A simple class to assist with creating control schemes with keyboard inputs for Phaser (3) <br>
+ * A simple plugin to assist with creating control schemes with keyboard inputs for Phaser (3) <br>
  * @example 
  * this.controls = new phaserControls(this);
  * @version: 1.2.0
  * @class phaserControls
+ * @extends Phaser.Plugins.ScenePlugin
  * @param {Phaser.Scene} scene - The Scene the phaserControls will be created in (this)
+ * @param {Phaser.pluginManager}
  */
 
-export default class phaserControls {
+export default class phaserControls extends Phaser.Plugins.ScenePlugin {
 
-    constructor(scene) {
+    constructor(scene, pluginManager) {
+
+        super(scene, pluginManager);
 
         /**
          * Get 'this' from scene

@@ -1,5 +1,14 @@
 # Phaser 3 Controls CHANGELOG
 
+### VERSION 1.2.0
+
+* Created the phaserControlsPlugin
+    * Easy installation, no need to import phaserControls into each scene thats needed anymore
+    * globally accessible within scenes using 'this.controls'
+* Added example for installing plugin
+* Revision of README.md to reflect changes
+    * default install method will now be via the plugin
+
 ### VERSION 1.1.0
 
 * fixed the schemes array from testing
