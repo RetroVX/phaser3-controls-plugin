@@ -5,7 +5,7 @@
  * A simple class to assist with creating control schemes with keyboard inputs for Phaser (3) <br>
  * @example 
  * this.controls = new phaserControls(this);
- * @version: 1.0.0
+ * @version: 1.1.0
  * @class phaserControls
  * @param {Phaser.Scene} scene - The Scene the phaserControls will be created in (this)
  */
