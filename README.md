@@ -23,7 +23,7 @@ Use phaserControlsPlugin.js or phaserControlsPlugin.min.js
 game config  
 ```javascript
 import levelScene from "./scenes/levelScene.js";
-import phaserControls from "./../dist/phaserControls.js";
+import phaserControls from "./../dist/phaserControlsPlugin.js";
 
 const config = {
     type: Phaser.AUTO,
