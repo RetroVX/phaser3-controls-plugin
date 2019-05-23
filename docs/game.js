@@ -1,5 +1,6 @@
 import basicScene from "./scenes/basicScene.js";
 import phaserControls from "./../dist/phaserControlsPlugin.js";
+import comboScene from "./scenes/comboScene.js";
 
 const config = {
   type: Phaser.AUTO,
@@ -15,7 +16,7 @@ const config = {
         { key: 'phaserControls', plugin: phaserControls, mapping: 'controls' }
     ]
   },
-  scene: [basicScene],
+  scene: [basicScene, comboScene],
 
 };
 

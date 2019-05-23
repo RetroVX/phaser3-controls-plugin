@@ -1,5 +1,10 @@
 # Phaser 3 Controls CHANGELOG
 
+### VERSION 1.3.1
+
+* Fixed minor bug with combo name being undefined
+* Changed onMatched to onMatch for createCombo function
+* Fixed examples in doc folder
 
 ### VERSION 1.3.0
 

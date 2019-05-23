@@ -194,7 +194,7 @@ Basic Example:
 // create the combo to dash player left
 let dashLeft = this.controls.createCombo({ 
     combo: 'AA',
-    onMatched: function(scene) {
+    onMatch: function(scene) {
         scene.player.x -= 100;
     }
 });
@@ -207,7 +207,7 @@ const comboConfig = {
     maxKeyDelay: 450, // optional - the delay between key presses, if longer then it resets the combo, default 0
     deleteOnMatch: false, // optional - delete the combo when the combo is complete, default false
     schemes: ['myControlScheme1', 'controlScheme2'], // optional - control schemes that use this combo, default ['global']
-    onMatched: function(scene) {}, // function to call when the combo is a match
+    onMatch: function(scene) {}, // function to call when the combo is a match
 }
 
 // delete combo

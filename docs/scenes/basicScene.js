@@ -12,8 +12,18 @@ export default class basicScene extends Phaser.Scene {
 
     create() {
 
+        this.sceneText = this.add.text(400, 24, 'Basic Example Scene', {fontFamily: 'Verdana', fontSize: 24, color: '#000000'}).setOrigin(0.5, 0.5);
+        this.sceneText2 = this.add.text(400, 50, 'Press SPACE to change scene', {fontFamily: 'Verdana', fontSize: 24, color: '#000000'}).setOrigin(0.5, 0.5);
+
         this.player = this.add.sprite(400, 200, 'player');
 
+        this.input.keyboard.on('keydown_SPACE', function (event) {
+
+            this.scene.switch('comboScene');
+    
+        }, this);
+    
+        this.input.keyboard.addCapture('SPACE');
 
         // create cursor keys 
         this.controls.createCursorKeys(true);
@@ -36,41 +46,10 @@ export default class basicScene extends Phaser.Scene {
         }
         this.controls.add(config);
 
-
-        let dashLeft = this.controls.createCombo({ 
-            name: 'dashLeft',
-            combo: [37, 37],
-            resetOnMatch: true,
-            maxKeyDelay: 450,
-            deleteOnMatch: false,
-            schemes: ['cursorKeysDefault'],
-            onMatched: function(scene) {
-                scene.player.x -= 100;
-            }
-        });
-
-        let dashRight = this.controls.createCombo({
-            name: 'dashRight',
-            combo: [39, 39],
-            resetOnMatch: true,
-            maxKeyDelay: 450,
-            deleteOnMatch: false,
-            schemes: ['cursorKeysDefault', 'wasdKeysDefault'],
-            onMatched: function(scene) {
-                scene.player.x += 100;
-            }         
-        });
-
-        this.controls.createKonamiCode(function(scene){
-            window.alert('30+ Lives!');
-        })
-
-        //dashRight.destroy();
-
         // Setup debug controls text
         // click on text to switch to next control scheme
         // x, y, font-size
-        this.controls.debugText(225, 200, 20, '#000000');
+        this.controls.debugText(225, 245, 18, '#000000');
 
     }
 

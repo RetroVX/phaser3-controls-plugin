@@ -5,7 +5,7 @@
  * A simple class to assist with creating control schemes with keyboard inputs for Phaser (3) <br>
  * @example 
  * this.controls = new phaserControls(this);
- * @version: 1.3.0
+ * @version: 1.3.1
  * @class phaserControls
  * @param {Phaser.Scene} scene - The Scene the phaserControls will be created in (this)
  */
@@ -52,8 +52,8 @@ export default class phaserControls {
         this.scene.input.keyboard.on('keycombomatch', function (event, key, data) {
             for(let i = 0; i < event.schemes.length; i++) {
 
-                if(this.getActive().name === event.schemes[i] || event.schemes[0] === 'global') {
-                    event.onMatched(this.scene);
+                if(event.schemes[0] === 'global' || this.getActive().name === event.schemes[i]) {
+                    event.onMatch(this.scene);
                 }
             }
 
@@ -397,7 +397,7 @@ export default class phaserControls {
         // optional data to pass
         combo.data = scheme.data;
         // function to call when combo matches
-        combo.onMatched = scheme.onMatched;
+        combo.onMatch = scheme.onMatch;
         // combo will only work if a specific control scheme is being used
         combo.schemes = scheme.schemes;
 
@@ -409,19 +409,19 @@ export default class phaserControls {
      * Create the Konami Code (up,up,down,down,left,left,right,right,b,a)
      * @method phaserControls.createKonamiCode
      * @type {function}
-     * @param {Function} onMatched - function to call when konami code has been entered
+     * @param {Function} onMatch - function to call when konami code has been entered
      * @return {Object} returns the konami combo object
      * @since 1.3.0     
      */
     
-    createKonamiCode(onMatched) {
+    createKonamiCode(onMatch) {
         const scene = this.scene;
 
         const konamiCode = [38, 38, 40, 40, 37, 37, 39, 39, 66, 65];
 
         let konamiCombo = scene.input.keyboard.createCombo(konamiCode);
         konamiCombo.name = 'konamiCode';
-        konamiCombo.onMatched = onMatched;
+        konamiCombo.onMatch = onMatch;
         konamiCombo.schemes = ['global'];
 
         return konamiCombo;

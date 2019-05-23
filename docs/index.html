@@ -3,20 +3,9 @@
 
 <head>
 	<meta charset="UTF-8" />
-	<title>Phaser 3 Controls Example</title>
+	<title>Phaser 3 Controls Plugin Example</title>
 	<style type="text/css">
 
-		* {
-			margin: 0;
-			padding: 0;
-		}		
-		body {
-			margin: 0;
-			text-align: center;
-			font-family: Verdana, Geneva, Tahoma, sans-serif;
-			color: #4a4a4a;
-  			background-color: #f9f9f9;
-		}
 		/* Move canvas into the middle of the page and add a border */
 		canvas {
 			padding: 0;		
@@ -28,6 +17,8 @@
 			display: block;
 		}
 	</style>
+	<link type="text/css" rel="stylesheet" href="assets/simple.css">
+
 	<script type="text/javascript" src="../lib/phaser.min.js"></script>
 	<script src="game.js" type="module"></script>
 
@@ -35,16 +26,115 @@
 </head>
 
 <body>
+<div class="container">
+	<h1>Phaser 3 Controls Plugin</h1>
+	<br>
+	<p>For more info and to download: GitHub: <a href="https://github.com/RetroVX/phaser3-controls">Phaser3 Controls</a></p>
+	<br>
+	<p>Docs <a href="out/phaserControls.html">phaserControls docs</a></p>
+	<br>
+	<p id="text"></p>
+	<div id="gameCanvas"></div>
+	<div id="install" >
+		<h3>Install</h3>
+		<p>Clone from Github</p>
+	<pre><code>
+import levelScene from "./scenes/levelScene.js";
+import phaserControls from "./../dist/phaserControlsPlugin.js";
 
-<h1>Phaser 3 Controls</h1>
-<br>
-<p>For more info and to download: GitHub: <a href="https://github.com/RetroVX/phaser3-controls">Phaser3 Controls</a></p>
-<p>Docs <a href="out/phaserControls.html">phaserControls docs</a></p>
-<br>
-<p id="text"></p>
-<div id="gameCanvas">
+const config = {
+	type: Phaser.AUTO,
+	width: 800,
+	height: 400,
+	plugins: {
+	scene: [
+		{ key: 'phaserControls', plugin: phaserControls, mapping: 'controls' }
+	]
+	},
+	parent: "gameCanvas",
+	scene: [levelScene],
+};
+
+const game = new Phaser.Game(config);
+
+// You can now access the plugin from any scene using this.controls
+this.controls
+	</code></pre>
+	</div>
+	<div id="basicExample">
+		<h3>Basic Example</h3>
+
+		<pre><code>
+this.controls.createCursorKeys(true);
+
+// create wasd keys 
+this.controls.createWasdKeys();
+
+// add new control scheme
+const config = {
+	name: 'azertyKeys',
+	controls: {
+	up: 'Z',
+	down: 'S',
+	left: 'Q',
+	right: 'D',
+	shift: 'SHIFT',
+	space: 'SPACE',
+	},
+	active: false,
+}
+
+this.controls.add(config);
+		</code></pre>
+	</div>
+	<div id="comboExample">
+		<h3>Combo Example</h3>
+		<pre><code>
+let basicExample = this.controls.createCombo({
+	combo: 'AA',
+	onMatch: function() {
+		console.log('Combo AA Fired!')
+	}
+})
+
+let dashLeft = this.controls.createCombo({ 
+	name: 'dashLeft',
+	combo: [37, 37],
+	resetOnMatch: true,
+	maxKeyDelay: 450,
+	deleteOnMatch: false,
+	onMatch: function(scene) {
+		scene.tweens.add({
+			targets: scene.player,
+			x: scene.player.x - 150,
+			duration: 250,
+			ease: 'Power1', 
+		});
+	}
+});
+
+let dashRight = this.controls.createCombo({
+	name: 'dashRight',
+	combo: [39, 39],
+	resetOnMatch: true,
+	maxKeyDelay: 450,
+	deleteOnMatch: false,
+	onMatch: function(scene) {
+		scene.tweens.add({
+			targets: scene.player,
+			x: scene.player.x + 150,
+			duration: 250,
+			ease: 'Power1', 
+		});
+	}         
+});
+
+this.controls.createKonamiCode(function(){
+	window.alert('30+ Lives!');
+});
+		</code></pre>
+	</div>
 </div>
-
 </body>
 
 </html>
