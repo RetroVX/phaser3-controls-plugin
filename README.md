@@ -188,6 +188,40 @@ this.controls.edit(getScheme, {
 this.controls.delete(scheme, destroy);
 ```
 
+##### Create a key combo
+Basic Example:  
+```javascript
+// create the combo to dash player left
+let dashLeft = this.controls.createCombo({ 
+    combo: 'AA',
+    onMatched: function(scene) {
+        scene.player.x -= 100;
+    }
+});
+
+// config options
+const comboConfig = {
+    combo: 'AA', // the combo to use
+    name: '', // optional - name to reference by if needed
+    resetOnMatch: true, // optional - reset the combo on match, default false
+    maxKeyDelay: 450, // optional - the delay between key presses, if longer then it resets the combo, default 0
+    deleteOnMatch: false, // optional - delete the combo when the combo is complete, default false
+    schemes: ['myControlScheme1', 'controlScheme2'], // optional - control schemes that use this combo, default ['global']
+    onMatched: function(scene) {}, // function to call when the combo is a match
+}
+
+// delete combo
+dashLeft.delete();
+```
+
+##### Create the Konami Code
+```javascript
+this.controls.createKonamiCode(function(scene){
+    window.alert('30+ Lives!');
+});
+```
+
+
 ##### Debug control scheme text
 ```javascript
 // Setup debug controls text
@@ -267,5 +301,8 @@ export default class levelScene extends Phaser.Scene {
 
     }
 ```
+
+#### Todo
+ - Create more examples
 
 #### Made With [Phaser.io](https://phaser.io)

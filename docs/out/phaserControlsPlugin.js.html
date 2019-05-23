@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: phaserControls.js</title>
+    <title>JSDoc: Source: phaserControlsPlugin.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: phaserControls.js</h1>
+    <h1 class="page-title">Source: phaserControlsPlugin.js</h1>
 
     
 
@@ -30,20 +30,21 @@
  * @author Conor Irwin &lt;conorirwin.co.uk> 
  * @classdesc 
  * GitHub: https://github.com/retroVX/phaser3-controls &lt;br>
- * A simple class to assist with creating control schemes with keyboard inputs for Phaser (3) &lt;br>
+ * A simple plugin to assist with creating control schemes with keyboard inputs for Phaser (3) &lt;br>
  * @example 
  * this.controls = new phaserControls(this);
- * @version: 1.0.0
+ * @version: 1.3.0
  * @class phaserControls
+ * @extends Phaser.Plugins.ScenePlugin
  * @param {Phaser.Scene} scene - The Scene the phaserControls will be created in (this)
+ * @param {Phaser.pluginManager}
  */
 
-// global schemes array so when switching scenes you do not lose your setup schemes
-let schemes = [];
+export default class phaserControls extends Phaser.Plugins.ScenePlugin {
 
-export default class phaserControls {
+    constructor(scene, pluginManager) {
 
-    constructor(scene) {
+        super(scene, pluginManager);
 
         /**
          * Get 'this' from scene
@@ -60,12 +61,9 @@ export default class phaserControls {
          * @name phaserControls.schemes
          * @type {Array}
          * @since 1.0.0
-         * @example
-         * this.controls.schemes
-         * // [{name: "azerty", controls: {…}, active: false}{}{}]
          */  
 
-        this.schemes = schemes;
+        this.schemes = [];
 
 
         /**
@@ -73,62 +71,26 @@ export default class phaserControls {
          * @name phaserControls.keys
          * @type {Object}
          * @since 1.0.0
-         * @example
-         * this.controls.keys
-         * // {up: keyInfo, down: keyInfo, left: keyInfo, down: keyInfo}
-         * this.controls.keys.up.isDown 
-         * this.controls.keys.down.isDown
          */ 
 
         this.keys = null;
 
-        // set scheme active
-        if(schemes.length > 0) this.setActive(schemes[0]);
-
-
 
         /**
-         * Config example to pass into phaserControls
-         * @method Config
-         * @type {Object}
-         * @since 1.0.0
-         * @namespace
-         * @property {string} name - The name of the control scheme
-         * @property {object} controls - Controls names and keys to use
-         * @property {string} active - Whether to set this control scheme to active
-         * @example
-         * const config = {
-         *     name: 'azertyKeys',
-         * 
-         *     controls: {
-         *         up: 'Z',
-         *         down: 'S',
-         *         left: 'Q',
-         *         right: 'D',
-         *         shift: 'SHIFT',
-         *         space: 'SPACE',
-         *     },
-         * 
-         *     active: false,
-         * }
-         */   
+         * Key Combo Match event
+         * @since 1.3.0
+         */
 
-        const config = {
+        this.scene.input.keyboard.on('keycombomatch', function (event, key, data) {
+            console.log(event);
+            for(let i = 0; i &lt; event.schemes.length; i++) {
 
-            name: '',
-             
-            controls: {
-                up: '',
-                down: '',
-                left: '',
-                right: '',
-                shift: '',
-                space: '',
-            },
-             
-            active: false,
-        }
+                if(this.getActive().name === event.schemes[i] || event.schemes[0] === 'global') {
+                    event.onMatched(this.scene);
+                }
+            }
 
+        }, this);
 
     }
 
@@ -137,8 +99,6 @@ export default class phaserControls {
     * Create default cursor keys.  
     * The difference between this.input.keyboard.createCursorKeys(); and phaserControls.createCursorKeys();
     * is that the phaserControls will be added to the control scheme array with other created control schemes.
-    * @example
-    * this.controls.createCursorKeys();
     * @method phaserControls.createCursorKeys
     * @type {function}
     * @param {boolean} [active=false] - If the cursor keys should be used, overiding current scheme
@@ -182,8 +142,6 @@ export default class phaserControls {
 
     /**
     * Create default wasd keys. The same approach as phaserControls.createCursorKeys but using WASD instead.
-    * @example
-    * this.controls.createWasdKeys();
     * @method phaserControls.createWasdKeys
     * @type {function}
     * @param {boolean} [active=false] - If the wasd keys should be used, overiding current scheme
@@ -232,14 +190,11 @@ export default class phaserControls {
     * @type {function}
     * @param {object} config - A new scheme config to be added to the schemes array
     * @since 1.0.0
-    * @example
-    * this.controls.add(config);
     */
 
     add(config) {
         // add new control scheme
         this.schemes.push(config);
-        schemes = this.schemes;
 
         // if new control scheme is set to 'active' then switch
         if (config.active) {
@@ -255,8 +210,6 @@ export default class phaserControls {
     * @type {function}
     * @param {Array} array - An array of control scheme objects
     * @since 1.0.0
-    * @example
-    * this.controls.addMultiple({config}, {config}, {config});
     */
 
     addMultiple(array) {
@@ -265,7 +218,6 @@ export default class phaserControls {
             // get schemes from passed in array and add to the phaserControls.schemes array
             array.forEach(function(config, index){
                 this.schemes.push(config);
-                schemes = this.schemes;
 
                 if(config.active) {
                     this.setActive(config);
@@ -283,9 +235,6 @@ export default class phaserControls {
     * @param {boolean} [active=false] - if the scheme should be used, overiding current scheme
     * @return {Object} The control scheme object
     * @since 1.0.0
-    * @example
-    * this.controls.get('azerty');
-    * // {name: "azerty", controls: {…}, active: false}
     */
 
     get(name, active) {
@@ -316,9 +265,6 @@ export default class phaserControls {
     * @param {boolean} [name=false] - If true returns only the schemes name
     * @return {(Object|string)} The control scheme object or string
     * @since 1.0.0
-    * @example
-    * this.controls.getActive();
-    * // {name: "newKeyScheme", controls: {…}, active: true}
     */
 
     getActive(name) {
@@ -336,6 +282,36 @@ export default class phaserControls {
 
     }
 
+    /**
+     * returns an array with all the control schemes
+     * @method phaserControls.getAll
+     * @type {function}
+     * @return {Array} The array containing the control schemes
+     * @since 1.1.0
+    */
+
+    getAll() {
+        return this.schemes;
+    }
+
+
+    /**
+     * Switch from one control scheme to another  
+     * Alternative way of get().setActive();
+     * @method phaserControls.switch
+     * @type {function}
+     * @param {(string|Object)} oldScheme - the current scheme being used
+     * @param {(string|object)} newScheme - the control scheme to switch to
+     * @since 1.1.0
+    */
+   
+    switch(oldScheme, newScheme) {
+        if (newScheme === undefined || newScheme === null) return console.error('phaserControls.switch : Parameter "newScheme" is undefined');
+
+        // setActive will automatically switch the old and new schemes
+        this.setActive(newScheme);
+    }
+
 
     /**
     * Select control scheme while turning off the currently used scheme
@@ -343,9 +319,6 @@ export default class phaserControls {
     * @type {function}
     * @param {(string|Object)} scheme - the 'name' or object of a scheme to be selected
     * @since 1.0.0
-    * @example
-    * // set 'azerty' control scheme active
-    * this.controls.setActive('azerty');
     */
 
     setActive(scheme) {
@@ -396,8 +369,6 @@ export default class phaserControls {
     * @param {(string|object)} scheme - The scheme name to find and delete
     * @param {boolean} destroy - Removes keys and captures used by scheme (phaser version >= 3.16)
     * @since 1.0.0
-    * @example
-    * this.controls.delete('azerty');
     */
 
     delete(scheme, destroy) {
@@ -435,6 +406,62 @@ export default class phaserControls {
 
 
     /**
+     * Create a key combo  
+     * Add a combo scheme globally or only when using a specific control scheme
+     * @method phaserControls.createCombo
+     * @param {Object} scheme - combo scheme config to pass into the keyboard manager
+     * @type {function}
+     * @return {Object} returns the combo object so you can edit/delete when needed
+     * @since 1.3.0     
+     */
+
+    createCombo(scheme) {
+        const scene = this.scene;
+
+        if (scheme.maxKeyDelay === undefined || scheme.maxKeyDelay === null) scheme.maxKeyDelay = 0;
+        if (scheme.resetOnMatch === undefined || scheme.resetOnMatch === null) scheme.resetOnMatch = false;
+        if (scheme.deleteOnMatch === undefined || scheme.deleteOnMatch === null) scheme.deleteOnMatch = false;
+        if (scheme.schemes === undefined || scheme.schemes === null) scheme.schemes = ['global'];
+
+        // create the combo
+        let combo = scene.input.keyboard.createCombo(scheme.combo, { maxKeyDelay: scheme.maxKeyDelay, resetOnMatch: scheme.resetOnMatch, deleteOnMatch: scheme.deleteOnMatch });
+        // combo name
+        combo.name = scheme.name;
+        // optional data to pass
+        combo.data = scheme.data;
+        // function to call when combo matches
+        combo.onMatched = scheme.onMatched;
+        // combo will only work if a specific control scheme is being used
+        combo.schemes = scheme.schemes;
+
+        return combo;
+    }
+
+
+    /**
+     * Create the Konami Code (up,up,down,down,left,left,right,right,b,a)
+     * @method phaserControls.createKonamiCode
+     * @type {function}
+     * @param {Function} onMatched - function to call when konami code has been entered
+     * @return {Object} returns the konami combo object
+     * @since 1.3.0     
+     */
+    
+    createKonamiCode(onMatched) {
+        const scene = this.scene;
+
+        const konamiCode = [38, 38, 40, 40, 37, 37, 39, 39, 66, 65];
+
+        let konamiCombo = scene.input.keyboard.createCombo(konamiCode);
+        konamiCombo.name = 'konamiCode';
+        konamiCombo.onMatched = onMatched;
+        konamiCombo.schemes = ['global'];
+
+        return konamiCombo;
+    }
+
+
+    /**
     * Debug text displaying current control scheme thats being used.
     * Click on the text to move onto the next control scheme and select it.
     * @method phaserControls.debugText
@@ -444,8 +471,6 @@ export default class phaserControls {
     * @param {number} fontsize - Fontsize to display the text at.
     * @param {string} color - font color.
     * @since 1.0.0
-    * @example
-    * this.controls.debugText(100, 100, 20, '#000000');
     */
 
     debugText(x, y, fontsize, color) {
@@ -476,7 +501,8 @@ export default class phaserControls {
             this.controlsText.setText('Click text to change the control scheme. \n \n' + JSON.stringify(scheme, undefined, 2));
         }, this);
     }
-}</code></pre>
+}
+</code></pre>
         </article>
     </section>
 
@@ -486,13 +512,13 @@ export default class phaserControls {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="phaserControls.html">phaserControls</a></li></ul><h3>Namespaces</h3><ul><li><a href="Config.html">Config</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="phaserControls.html">phaserControls</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Apr 11 2019 22:59:29 GMT+0100 (British Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu May 23 2019 17:19:14 GMT+0100 (British Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -1,5 +1,15 @@
 # Phaser 3 Controls CHANGELOG
 
+
+### VERSION 1.3.0
+
+* Added createCombo(comboConfig) function that easily creates key combos
+    * Example added to basicScene.js inside docs/scene folder
+    * Allows combos to only be used depending on the control scheme or it can be used globally
+* Added createKonamiCode(function(scene){})
+* Updated README.md to reflect changes
+* Updated JSDOCs found in docs/out folder
+
 ### VERSION 1.2.0
 
 * Created the phaserControlsPlugin

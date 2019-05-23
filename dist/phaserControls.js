@@ -5,7 +5,7 @@
  * A simple class to assist with creating control schemes with keyboard inputs for Phaser (3) <br>
  * @example 
  * this.controls = new phaserControls(this);
- * @version: 1.2.0
+ * @version: 1.3.0
  * @class phaserControls
  * @param {Phaser.Scene} scene - The Scene the phaserControls will be created in (this)
  */
@@ -42,6 +42,22 @@ export default class phaserControls {
          */ 
 
         this.keys = null;
+
+
+        /**
+         * Key Combo Match event
+         * @since 1.3.0
+         */
+
+        this.scene.input.keyboard.on('keycombomatch', function (event, key, data) {
+            for(let i = 0; i < event.schemes.length; i++) {
+
+                if(this.getActive().name === event.schemes[i] || event.schemes[0] === 'global') {
+                    event.onMatched(this.scene);
+                }
+            }
+
+        }, this);
 
     }
 
@@ -353,6 +369,62 @@ export default class phaserControls {
             // select the first scheme in the array
             this.setActive(schemesArray[0]);
         }
+    }
+
+
+    /**
+     * Create a key combo  
+     * Add a combo scheme globally or only when using a specific control scheme
+     * @method phaserControls.createCombo
+     * @param {Object} scheme - combo scheme config to pass into the keyboard manager
+     * @type {function}
+     * @return {Object} returns the combo object so you can edit/delete when needed
+     * @since 1.3.0     
+     */
+
+    createCombo(scheme) {
+        const scene = this.scene;
+
+        if (scheme.maxKeyDelay === undefined || scheme.maxKeyDelay === null) scheme.maxKeyDelay = 0;
+        if (scheme.resetOnMatch === undefined || scheme.resetOnMatch === null) scheme.resetOnMatch = false;
+        if (scheme.deleteOnMatch === undefined || scheme.deleteOnMatch === null) scheme.deleteOnMatch = false;
+        if (scheme.schemes === undefined || scheme.schemes === null) scheme.schemes = ['global'];
+
+        // create the combo
+        let combo = scene.input.keyboard.createCombo(scheme.combo, { maxKeyDelay: scheme.maxKeyDelay, resetOnMatch: scheme.resetOnMatch, deleteOnMatch: scheme.deleteOnMatch });
+        // combo name
+        combo.name = scheme.name;
+        // optional data to pass
+        combo.data = scheme.data;
+        // function to call when combo matches
+        combo.onMatched = scheme.onMatched;
+        // combo will only work if a specific control scheme is being used
+        combo.schemes = scheme.schemes;
+
+        return combo;
+    }
+
+
+    /**
+     * Create the Konami Code (up,up,down,down,left,left,right,right,b,a)
+     * @method phaserControls.createKonamiCode
+     * @type {function}
+     * @param {Function} onMatched - function to call when konami code has been entered
+     * @return {Object} returns the konami combo object
+     * @since 1.3.0     
+     */
+    
+    createKonamiCode(onMatched) {
+        const scene = this.scene;
+
+        const konamiCode = [38, 38, 40, 40, 37, 37, 39, 39, 66, 65];
+
+        let konamiCombo = scene.input.keyboard.createCombo(konamiCode);
+        konamiCombo.name = 'konamiCode';
+        konamiCombo.onMatched = onMatched;
+        konamiCombo.schemes = ['global'];
+
+        return konamiCombo;
     }
 
 

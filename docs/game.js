@@ -1,4 +1,5 @@
 import basicScene from "./scenes/basicScene.js";
+import phaserControls from "./../dist/phaserControlsPlugin.js";
 
 const config = {
   type: Phaser.AUTO,
@@ -6,6 +7,14 @@ const config = {
   width: 800,
   height: 400,
   parent: "gameCanvas",
+  dom: {
+    createContainer: true
+  },
+  plugins: {
+    scene: [
+        { key: 'phaserControls', plugin: phaserControls, mapping: 'controls' }
+    ]
+  },
   scene: [basicScene],
 
 };
