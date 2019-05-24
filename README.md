@@ -5,7 +5,7 @@ A simple plugin to assist with creating control schemes with keyboard inputs for
 
 ### Demo
 
-Example can be found in the docs folder
+https://retrovx.github.io/phaser3-controls-plugin/
 
 ## Getting Started
 
