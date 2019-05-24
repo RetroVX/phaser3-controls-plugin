@@ -1,5 +1,11 @@
 # Phaser 3 Controls CHANGELOG
 
+### VERSION 1.3.2
+
+* Fixed error with combo for konami code
+* minor update to README.md
+* minor update to index.html inside docs folder
+
 ### VERSION 1.3.1
 
 * Fixed minor bug with combo name being undefined

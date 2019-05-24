@@ -5,7 +5,7 @@
  * A simple class to assist with creating control schemes with keyboard inputs for Phaser (3) <br>
  * @example 
  * this.controls = new phaserControls(this);
- * @version: 1.3.1
+ * @version: 1.3.2
  * @class phaserControls
  * @param {Phaser.Scene} scene - The Scene the phaserControls will be created in (this)
  */
@@ -406,7 +406,7 @@ export default class phaserControls {
 
 
     /**
-     * Create the Konami Code (up,up,down,down,left,left,right,right,b,a)
+     * Create the Konami Code (up,up,down,down,left,right,left,right,b,a)
      * @method phaserControls.createKonamiCode
      * @type {function}
      * @param {Function} onMatch - function to call when konami code has been entered
@@ -417,7 +417,7 @@ export default class phaserControls {
     createKonamiCode(onMatch) {
         const scene = this.scene;
 
-        const konamiCode = [38, 38, 40, 40, 37, 37, 39, 39, 66, 65];
+        const konamiCode = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
 
         let konamiCombo = scene.input.keyboard.createCombo(konamiCode);
         konamiCombo.name = 'konamiCode';

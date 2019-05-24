@@ -23,7 +23,7 @@ Use phaserControlsPlugin.js or phaserControlsPlugin.min.js
 game config  
 ```javascript
 import levelScene from "./scenes/levelScene.js";
-import phaserControls from "./../dist/phaserControlsPlugin.js";
+import phaserControls from "./path/to/phaserControlsPlugin.js";
 
 const config = {
     type: Phaser.AUTO,
@@ -55,7 +55,7 @@ Use phaserControls.js or phaserControls.min.js
 
 
 ```javascript
-import phaserControls from "./phaserControls.js";
+import phaserControls from "./path/to/phaserControls.js";
 
 // pass scene instance
 this.controls = new phaserControls(this);
@@ -85,7 +85,7 @@ const config = {
 
 ### Examples
 
-##### Add new control scheme:
+#### Add new control scheme:
 
 ```javascript
 this.controls.add({
@@ -102,7 +102,7 @@ this.controls.add({
 });
 ```
 
-##### Add multiple control schemes
+#### Add multiple control schemes
 ```javascript
 let array = [
     {config},
@@ -114,19 +114,19 @@ this.controls.addMultiple(array);
 
 ```
 
-##### Access Controls
+#### Access Controls
 ```javascript
 this.controls.keys
 // this.controls.keys.up
 ```
 
-##### Access Control Schemes
+#### Access Control Schemes
 ```javascript
 // returns schemes array
 this.controls.getAll();
 ```
 
-##### Create WASD keys (w,a,s,d, shift, space) or CURSOR keys (up, down, left, right, shift, space)
+#### Create WASD keys (w,a,s,d, shift, space) or CURSOR keys (up, down, left, right, shift, space)
 
 ```javascript
 // options
@@ -137,7 +137,7 @@ this.controls.createWasdKeys();
 this.controls.createCursorKeys();
 ```
 
-##### Get control scheme object
+#### Get control scheme object
 
 ```javascript
 // get scheme object. Leave blank to get currently used control scheme
@@ -148,7 +148,7 @@ let scheme = this.controls.get('azerty');
 let currentScheme = this.controls.getActive();
 ```
 
-##### Select control scheme to use
+#### Select control scheme to use
 ```javascript
 // scheme - pass in either the control scheme name string or object
 this.controls.setActive(scheme);
@@ -160,7 +160,7 @@ this.controls.switch(oldScheme, newScheme);
 ```
 
 
-##### Edit control scheme
+#### Edit control scheme
 ```javascript
 // 
 let getScheme = this.controls.get('azerty');
@@ -180,7 +180,7 @@ this.controls.edit(getScheme, {
 })
 ```
 
-##### Delete control scheme
+#### Delete control scheme
 ```javascript
 // delete control scheme
 // scheme - pass in either control scheme name string or object
@@ -188,7 +188,7 @@ this.controls.edit(getScheme, {
 this.controls.delete(scheme, destroy);
 ```
 
-##### Create a key combo
+#### Create a key combo
 Basic Example:  
 ```javascript
 // create the combo to dash player left
@@ -214,7 +214,7 @@ const comboConfig = {
 dashLeft.delete();
 ```
 
-##### Create the Konami Code
+#### Create the Konami Code
 ```javascript
 this.controls.createKonamiCode(function(scene){
     window.alert('30+ Lives!');
@@ -222,7 +222,7 @@ this.controls.createKonamiCode(function(scene){
 ```
 
 
-##### Debug control scheme text
+#### Debug control scheme text
 ```javascript
 // Setup debug controls text
 // click on text to switch to next control scheme
