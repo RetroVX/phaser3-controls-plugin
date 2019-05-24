@@ -18,8 +18,9 @@
 		}
 	</style>
 	<link type="text/css" rel="stylesheet" href="assets/simple.css">
+	<link type="text/css" rel="stylesheet" href="assets/prism.css">
 
-	<script type="text/javascript" src="../lib/phaser.min.js"></script>
+	<script type="text/javascript" src="lib/phaser.min.js"></script>
 	<script src="game.js" type="module"></script>
 
 
@@ -29,7 +30,7 @@
 <div class="container">
 	<h1>Phaser 3 Controls Plugin</h1>
 	<br>
-	<p>For more info and to download: GitHub: <a href="https://github.com/RetroVX/phaser3-controls">Phaser3 Controls</a></p>
+	<p>For more info and to download: GitHub: <a href="https://github.com/RetroVX/phaser3-controls-plugin">Phaser3 Controls Plugin</a></p>
 	<br>
 	<p>Docs <a href="out/phaserControls.html">phaserControls docs</a></p>
 	<br>
@@ -37,8 +38,9 @@
 	<div id="gameCanvas"></div>
 	<div id="install" >
 		<h3>Install</h3>
-		<p>Clone from Github</p>
-	<pre><code>
+	<pre><code class="language-javascript" style="font-size:1rem;">
+git clone https://github.com/RetroVX/phaser3-controls-plugin.git
+
 import levelScene from "./scenes/levelScene.js";
 import phaserControls from "./path/to/phaserControlsPlugin.js";
 
@@ -64,32 +66,71 @@ this.controls
 	<div id="basicExample">
 		<h3>Basic Example</h3>
 
-		<pre><code>
-this.controls.createCursorKeys(true);
+		<pre><code class="language-javascript" style="font-size:1rem;">
+export default class levelScene extends Phaser.Scene {
+	constructor() {
+		super();
+	}
 
-// create wasd keys 
-this.controls.createWasdKeys();
+	preload() {
+		this.load.image('player', 'assets/player.png');
+	}
 
-// add new control scheme
-const config = {
-	name: 'azertyKeys',
-	controls: {
-	up: 'Z',
-	down: 'S',
-	left: 'Q',
-	right: 'D',
-	shift: 'SHIFT',
-	space: 'SPACE',
-	},
-	active: false,
-}
+	create() {
 
-this.controls.add(config);
+		this.player = this.add.sprite(400, 400, 'player');
+
+		// set cursor keys active
+		this.controls.createCursorKeys(true);
+
+		// create wasd keys 
+		this.controls.createWasdKeys();
+
+		// add new control scheme
+		const config = {
+			name: 'azertyKeys',
+			controls: {
+			up: 'Z',
+			down: 'S',
+			left: 'Q',
+			right: 'D',
+			shift: 'SHIFT',
+			space: 'SPACE',
+			},
+			active: false,
+		}
+
+		this.controls.add(config);
+	}
+
+	update() {
+		
+		if(this.controls.keys.up.isDown) {
+			this.player.y -= 4;
+		}
+		else if(this.controls.keys.down.isDown) {
+			this.player.y += 4;
+		}
+
+		if(this.controls.keys.left.isDown) {
+			this.player.x -= 4;
+		}
+		else if(this.controls.keys.right.isDown) {
+			this.player.x += 4;
+		}
+
+		//if(this.controls.keys.space.isDown) {
+		//    // do something
+		//}
+		//else if(this.controls.keys.attack.isDown) {
+		//    // do something else
+		//}
+	}
 		</code></pre>
 	</div>
 	<div id="comboExample">
 		<h3>Combo Example</h3>
-		<pre><code>
+		<pre><code class="language-javascript" style="font-size:1rem;">
 let basicExample = this.controls.createCombo({
 	combo: 'AA',
 	onMatch: function() {
@@ -135,6 +176,8 @@ this.controls.createKonamiCode(function(){
 		</code></pre>
 	</div>
 </div>
+
+<script src="assets/prism.js"></script>
 </body>
 
 </html>

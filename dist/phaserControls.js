@@ -1,7 +1,7 @@
 /**
  * @author Conor Irwin <conorirwin.co.uk> 
  * @classdesc 
- * GitHub: https://github.com/retroVX/phaser3-controls <br>
+ * GitHub: https://github.com/retroVX/phaser3-controls-plugin <br>
  * A simple class to assist with creating control schemes with keyboard inputs for Phaser (3) <br>
  * @example 
  * this.controls = new phaserControls(this);

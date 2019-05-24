@@ -12,7 +12,7 @@ Example can be found in the docs folder
 ### Install
 
 ```
-git clone https://github.com/RetroVX/phaser3-controls.git
+git clone https://github.com/RetroVX/phaser3-controls-plugin.git
 ```
 Or download from Zip
 

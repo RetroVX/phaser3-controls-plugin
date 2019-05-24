@@ -1,5 +1,5 @@
 import basicScene from "./scenes/basicScene.js";
-import phaserControls from "./../dist/phaserControlsPlugin.js";
+import phaserControls from "./lib/phaserControlsPlugin.js";
 import comboScene from "./scenes/comboScene.js";
 
 const config = {
