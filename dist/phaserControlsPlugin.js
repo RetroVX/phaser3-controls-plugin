@@ -1,5 +1,6 @@
 /**
  * @author Conor Irwin <conorirwin.co.uk> 
+ * @license {@link http://opensource.org/licenses/MIT|MIT License}
  * @classdesc 
  * GitHub: https://github.com/retroVX/phaser3-controls-plugin <br>
  * A simple plugin to assist with creating control schemes with keyboard inputs for Phaser (3) <br>
