@@ -231,7 +231,7 @@ a:hover:after {
 
 code,
 kbd {
-    background-color: #002139;
+    background-color: rgb(39, 40, 34);
     color: rgba(255, 255, 255, .87);
     padding: 5px;
     border-radius: 6px

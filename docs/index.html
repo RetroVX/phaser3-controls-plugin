@@ -28,7 +28,9 @@
 
 <body>
 <div class="container">
+	<nav style="background: gainsboro">
 	<h1>Phaser 3 Controls Plugin</h1>
+	</nav>
 	<br>
 	<p>For more info and to download: GitHub: <a href="https://github.com/RetroVX/phaser3-controls-plugin">Phaser3 Controls Plugin</a></p>
 	<br>
@@ -38,8 +40,10 @@
 	<div id="gameCanvas"></div>
 	<div id="install" >
 		<h3>Install</h3>
+	<pre><code class="language-javascript" style="font-size:1rem;">git clone https://github.com/RetroVX/phaser3-controls-plugin.git</code></pre>
+	<h3>phaserControlsPlugin.js</h3>
+	<p>If using the plugin, install into your game config and now every scene can use the plugin under <code class="language-javascript" style="font-size:1rem;">this.controls</code></p>
 	<pre><code class="language-javascript" style="font-size:1rem;">
-git clone https://github.com/RetroVX/phaser3-controls-plugin.git
 
 import levelScene from "./scenes/levelScene.js";
 import phaserControls from "./path/to/phaserControlsPlugin.js";
@@ -61,6 +65,23 @@ const game = new Phaser.Game(config);
 
 // You can now access the plugin from any scene using this.controls
 this.controls
+	</code></pre>
+<h3>phaserControls.js</h3>
+<p>If using the phaserControls class, import directly into the scene/scenes needed</p>
+	<pre><code class="language-javascript" style="font-size:1rem;">
+
+import phaserControls from "./path/to/phaserControls.js";
+
+export default class levelScene extends Phaser.Scene {
+	constructor() {
+		super();
+	}
+
+	create() {
+		this.controls = new phaserControls(this);
+	}
+
+}
 	</code></pre>
 	</div>
 	<div id="basicExample">

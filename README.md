@@ -78,7 +78,7 @@ const config = {
         shift: 'SHIFT',
         space: 'SPACE'
     },
-    // if true then this controller scheme will be used (only one scheme can be 'active' at one time)
+    // if true then this control scheme will be used (only one scheme can be 'active' at one time)
     active: true,
 }
 ```
@@ -117,12 +117,15 @@ this.controls.addMultiple(array);
 #### Access Controls
 ```javascript
 this.controls.keys
-// this.controls.keys.up
+// this.controls.keys.up.isDown
+// this.controls.keys.down.isDown
+// this.controls.keys.left.isDown
+// this.controls.keys.right.isDown
 ```
 
 #### Access Control Schemes
 ```javascript
-// returns schemes array
+// returns schemes array with all saved control schemes
 this.controls.getAll();
 ```
 
@@ -140,11 +143,11 @@ this.controls.createCursorKeys();
 #### Get control scheme object
 
 ```javascript
-// get scheme object. Leave blank to get currently used control scheme
+// get scheme object. Leave blank to get the active control scheme
 let scheme = this.controls.get('azerty');
 // returns - {name: "azerty", controls: {…}, active: false}
 
-// get currently used control scheme, set to true to return only the control scheme name string 
+// get the active control scheme, set to true to return only the control scheme name string 
 let currentScheme = this.controls.getActive();
 ```
 
@@ -226,8 +229,8 @@ this.controls.createKonamiCode(function(scene){
 ```javascript
 // Setup debug controls text
 // click on text to switch to next control scheme
-// x, y, font-size
-this.controls.debugText(200, 200, 20);
+// x, y, font-size, font color
+this.controls.debugText(200, 200, 20, '#000000');
 ```
 
 #### levelScene.js Example

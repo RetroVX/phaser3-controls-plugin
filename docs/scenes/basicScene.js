@@ -51,6 +51,10 @@ export default class basicScene extends Phaser.Scene {
         // x, y, font-size
         this.controls.debugText(225, 245, 18, '#000000');
 
+        this.controls.createKonamiCode(function(){
+            window.alert('30+ Lives!');
+        });
+
     }
 
     update(time, delta) {

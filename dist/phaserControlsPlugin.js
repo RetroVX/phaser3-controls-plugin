@@ -7,7 +7,7 @@
  * @class phaserControls
  * @extends Phaser.Plugins.ScenePlugin
  * @param {Phaser.Scene} scene - The Scene the phaserControls will be created in (this)
- * @param {Phaser.pluginManager}
+ * @param {Phaser.pluginManager} pluginManager - Phaser pluginManager
  */
 
 export default class phaserControls extends Phaser.Plugins.ScenePlugin {
