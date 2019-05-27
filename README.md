@@ -69,6 +69,9 @@ const config = {
     // name of the controller scheme
     name: 'WASDKeys',
 
+    // if true then this control scheme will be used (only one scheme can be 'active' at one time)
+    active: true,
+
     // setup controls
     controls: {
         up: 'W',
@@ -78,8 +81,16 @@ const config = {
         shift: 'SHIFT',
         space: 'SPACE'
     },
-    // if true then this control scheme will be used (only one scheme can be 'active' at one time)
-    active: true,
+
+    // optional. Pass any data you want to add to the control scheme
+    data: {},
+
+    // optional function to call whenever this control scheme is set to active
+    // scene - (optional) the scene this function is running in
+    // scheme - (optional) the control scheme object
+    onActive: function(scene, scheme) {
+        console.log(scheme.name + ' is active!');
+    }
 }
 ```
 
@@ -90,6 +101,7 @@ const config = {
 ```javascript
 this.controls.add({
     name: 'azerty',
+    active: false,
     controls: {
         up: 'Z',
         down: 'S',
@@ -98,7 +110,6 @@ this.controls.add({
         shift: 'SHIFT',
         space: 'SPACE',
     },
-    active: false,
 });
 ```
 
@@ -134,10 +145,15 @@ this.controls.getAll();
 ```javascript
 // options
 // active - (default false) set this scheme to active (this overrides the current active control scheme)
-// add to schemes array - (default true) adds this control scheme to to the schemes array
+// add - (to schemes array0 - (default true) adds this control scheme to to the schemes array
+// data - optional data to pass to this control scheme
+// onActive (scene, scheme) - optional function to call when this control scheme is set active
 
 this.controls.createWasdKeys();
-this.controls.createCursorKeys();
+// cursor keys set active, add to schemes array, pass no data, add onActive function
+this.controls.createCursorKeys(true, true, null, function(scene, scheme){
+    console.log('Cursor Keys is active!');
+});
 ```
 
 #### Get control scheme object
@@ -158,8 +174,8 @@ this.controls.setActive(scheme);
 ```
 Or
 ```javascript
-// only needs the newScheme paramter to be set
-this.controls.switch(oldScheme, newScheme);
+// scheme - pass in either the control scheme name string or object
+this.controls.switch(scheme);
 ```
 
 
@@ -171,15 +187,15 @@ let getScheme = this.controls.get('azerty');
 // config (object) - config to replace chosen control scheme
 this.controls.edit(getScheme, {
     name: 'azertyEdit',
-    controls: {
-    up: 'Z',
-    down: 'S',
-    left: 'Q',
-    right: 'D',
-    shift: 'SHIFT',
-    space: 'SPACE',
-    },
     active: false,
+    controls: {
+        up: 'Z',
+        down: 'S',
+        left: 'Q',
+        right: 'D',
+        shift: 'SHIFT',
+        space: 'SPACE',
+    },
 })
 ```
 
@@ -187,13 +203,26 @@ this.controls.edit(getScheme, {
 ```javascript
 // delete control scheme
 // scheme - pass in either control scheme name string or object
-// destroy - ( >= phaser v3.16) - removes keys and removes captures
+// destroy - ( >= phaser v3.16) - boolean, removes keys and removes captures
 this.controls.delete(scheme, destroy);
 ```
 
 #### Create a key combo
 Basic Example:  
 ```javascript
+// config options
+const comboConfig = {
+    combo: 'AA', // the combo to use
+    name: '', // optional - name to reference by if needed
+    data: {}, // optional - data to pass into the combo event
+    resetOnMatch: true, // optional - reset the combo on match, default false
+    maxKeyDelay: 450, // optional - the delay between key presses, if longer then it resets the combo, default 0
+    deleteOnMatch: false, // optional - delete the combo when the combo is complete, default false
+    schemes: ['myControlScheme1', 'controlScheme2'], // optional - control schemes that use this combo, default ['global']
+    onMatch: function(scene, event) {}, // function to call when the combo is a match
+    onMatchOnce: function(scene, event) {} // Same as onMatch but only runs once
+}
+
 // create the combo to dash player left
 let dashLeft = this.controls.createCombo({ 
     combo: 'AA',
@@ -202,16 +231,14 @@ let dashLeft = this.controls.createCombo({
     }
 });
 
-// config options
-const comboConfig = {
-    combo: 'AA', // the combo to use
-    name: '', // optional - name to reference by if needed
-    resetOnMatch: true, // optional - reset the combo on match, default false
-    maxKeyDelay: 450, // optional - the delay between key presses, if longer then it resets the combo, default 0
-    deleteOnMatch: false, // optional - delete the combo when the combo is complete, default false
-    schemes: ['myControlScheme1', 'controlScheme2'], // optional - control schemes that use this combo, default ['global']
-    onMatch: function(scene) {}, // function to call when the combo is a match
-}
+// create a combo that only works if 'yourcontrolscheme' is active
+let dashLeftWasd = this.controls.createCombo({ 
+    combo: 'AA',
+    schemes: ['yourcontrolscheme'],
+    onMatch: function(scene) {
+        scene.player.x -= 100;
+    }
+});
 
 // delete combo
 dashLeft.delete();
@@ -253,6 +280,8 @@ export default class levelScene extends Phaser.Scene {
         const config = {
             name: 'cursorKeys',
 
+            active: true,
+
             controls: {
                 up: 'UP',
                 down: 'DOWN',
@@ -263,7 +292,6 @@ export default class levelScene extends Phaser.Scene {
                 attack: 'Z'
             },
 
-            active: true,
         }
 
         this.controls.add(config);

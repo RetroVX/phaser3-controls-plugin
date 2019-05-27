@@ -1,5 +1,14 @@
 # Phaser 3 Controls CHANGELOG
 
+### VERSION 1.4.0
+
+* Added parameter optional onMatchOnce(scene, event) function to the createCombo() config
+* Added parameter optional data object to pass into the createCombo() config
+* Added parameter optional onActive(scene, scheme) function to the add() config
+* Added parameter optional data object to pass into the add() config
+* Fixed switch function
+* Updated examples and README.md
+
 ### VERSION 1.3.2
 
 * Fixed error with combo for konami code

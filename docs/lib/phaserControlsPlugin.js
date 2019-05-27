@@ -3,11 +3,11 @@
  * @classdesc 
  * GitHub: https://github.com/retroVX/phaser3-controls-plugin <br>
  * A simple plugin to assist with creating control schemes with keyboard inputs for Phaser (3) <br>
- * @version: 1.3.2
+ * @version: 1.4.0
  * @class phaserControls
  * @extends Phaser.Plugins.ScenePlugin
  * @param {Phaser.Scene} scene - The Scene the phaserControls will be created in (this)
- * @param {Phaser.pluginManager}
+ * @param {Phaser.pluginManager} pluginManager - Phaser plugin manager
  */
 
 export default class phaserControls extends Phaser.Plugins.ScenePlugin {
@@ -55,7 +55,19 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
             for(let i = 0; i < event.schemes.length; i++) {
 
                 if(event.schemes[0] === 'global' || this.getActive().name === event.schemes[i]) {
-                    event.onMatch(this.scene);
+
+                    // run onMatch function
+                    if(event.onMatch !== undefined) {
+                        event.onMatch(this.scene, event);
+                    }
+
+                    // run onMatchOnce if function passed in and counter is 0
+                    if(event.counter === 0 && event.onMatchOnce !== undefined) {
+                        event.onMatchOnce(this.scene, event);
+                    }
+
+                    // increase counter
+                    event.counter += 1;
                 }
             }
 
@@ -72,19 +84,22 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
     * @type {function}
     * @param {boolean} [active=false] - If the cursor keys should be used, overiding current scheme
     * @param {boolean} [add=true] - add the default cursor keys to the schemes list
+    * @param {object} data - optional data to pass into the control scheme
+    * @param {function} onActiveFunc - optional function to call whenever this control scheme is set to active
     * @since 1.0.0
     */
 
-    createCursorKeys(active, add) {
+    createCursorKeys(active, add, data, onActiveFunc) {
         // make sure 'add' & 'active' are not undefined
         if (this.cursorKeys !== undefined) return console.log('Cursor Keys already created!');
         if (active === undefined || active === null) active = false;
         if (add === undefined || add === null) add = true;
+        if (data === undefined || data === null) data = {},
+
         // scheme
         this.cursorKeys = {
-
             name: 'cursorKeysDefault',
-
+            active: active,
             controls: {
                 up: 'UP',
                 down: 'DOWN',
@@ -93,8 +108,12 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
                 shift: 'SHIFT',
                 space: 'SPACE'
             },
-
-            active: active,
+            data: data,
+            onActive: function(scene, scheme) {
+                if(onActiveFunc !== undefined) {
+                    onActiveFunc(scene, scheme);
+                }
+            }
         }
         // if true add to list of schemes
         if (add) {
@@ -115,19 +134,22 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
     * @type {function}
     * @param {boolean} [active=false] - If the wasd keys should be used, overiding current scheme
     * @param {boolean} [add=true] - add the default wasd keys to the schemes list
+    * @param {object} data - optional data to pass into the control scheme
+    * @param {function} onActiveFunc - optional function to call whenever this control scheme is set to active
     * @since 1.0.0
     */
   
-    createWasdKeys(active, add) {
+    createWasdKeys(active, add, data, onActiveFunc) {
         // make sure 'add' & 'active' are not undefined
         if (this.wasdKeys !== undefined) return console.log('WASD Keys already created!');
         if (active === undefined || active === null) active = false;
         if (add === undefined || add === null) add = true;
+        if (data === undefined || data === null) data = {},
+
         // scheme
         this.wasdKeys = {
-
             name: 'wasdKeysDefault',
-
+            active: active,
             controls: {
                 up: 'W',
                 down: 'S',
@@ -136,8 +158,12 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
                 shift: 'SHIFT',
                 space: 'SPACE'
             },
-
-            active: active,
+            data: data,
+            onActive: function(scene, scheme) {
+                if(onActiveFunc !== undefined) {
+                    onActiveFunc();
+                }
+            }
         }
 
         // if true add to list of schemes
@@ -162,6 +188,7 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
     */
 
     add(config) {
+        if(config.data === undefined || config.data === null) config.data = {};
         // add new control scheme
         this.schemes.push(config);
 
@@ -266,19 +293,16 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
 
     /**
      * Switch from one control scheme to another  
-     * Alternative way of get().setActive();
+     * Alternative way of setActive();
      * @method phaserControls.switch
      * @type {function}
-     * @param {(string|Object)} oldScheme - the current scheme being used
-     * @param {(string|object)} newScheme - the control scheme to switch to
+     * @param {(string|object)} scheme - the control scheme to switch to
      * @since 1.1.0
     */
    
-    switch(oldScheme, newScheme) {
-        if (newScheme === undefined || newScheme === null) return console.error('phaserControls.switch : Parameter "newScheme" is undefined');
-
+    switch(scheme) {
         // setActive will automatically switch the old and new schemes
-        this.setActive(newScheme);
+        this.setActive(scheme);
     }
 
 
@@ -304,6 +328,10 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
                 getNewScheme = s;
             }
         });
+
+        if(getNewScheme.onActive !== undefined) {
+            getNewScheme.onActive(scene, getNewScheme);
+        }
 
         // set new keys
         this.keys = scene.input.keyboard.addKeys(getNewScheme.controls);
@@ -400,8 +428,12 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
         combo.data = scheme.data;
         // function to call when combo matches
         combo.onMatch = scheme.onMatch;
+        // function to call when combo matches once
+        combo.onMatchOnce = scheme.onMatchOnce;
         // combo will only work if a specific control scheme is being used
         combo.schemes = scheme.schemes;
+        // counter for onMatchOnce
+        combo.counter = 0;
 
         return combo;
     }

@@ -40,6 +40,7 @@
 	<div id="gameCanvas"></div>
 	<div id="install" >
 		<h3>Install</h3>
+		<p>See README.md to see all options</p>
 	<pre><code class="language-javascript" style="font-size:1rem;">git clone https://github.com/RetroVX/phaser3-controls-plugin.git</code></pre>
 	<h3>phaserControlsPlugin.js</h3>
 	<p>If using the plugin, install into your game config and now every scene can use the plugin under <code class="language-javascript" style="font-size:1rem;">this.controls</code></p>
@@ -85,6 +86,36 @@ export default class levelScene extends Phaser.Scene {
 	</code></pre>
 	</div>
 	<div id="basicExample">
+		<h3>config</h3>
+		<pre><code class="language-javascript" style="font-size:1rem;">
+const config = {
+	// name of the controller scheme
+	name: 'WASDKeys',
+
+	// if true then this control scheme will be used (only one scheme can be 'active' at one time)
+	active: true,
+
+	// setup controls
+	controls: {
+		up: 'W',
+		down: 'S',
+		left: 'A',
+		right: 'D',
+		shift: 'SHIFT',
+		space: 'SPACE'
+	},
+
+	// optional. Pass any data you want to add to the control scheme
+    data: {},
+
+	// optional function to call whenever this control scheme is set to active
+	// scene - (optional) the scene this function is running in
+	// scheme - (optional) the control scheme object
+	onActive: function(scene, scheme) {
+		console.log(scheme.name + ' is active!');
+	}
+}
+		</code></pre>
 		<h3>Basic Example</h3>
 
 		<pre><code class="language-javascript" style="font-size:1rem;">
@@ -110,15 +141,15 @@ export default class levelScene extends Phaser.Scene {
 		// add new control scheme
 		const config = {
 			name: 'azertyKeys',
-			controls: {
-			up: 'Z',
-			down: 'S',
-			left: 'Q',
-			right: 'D',
-			shift: 'SHIFT',
-			space: 'SPACE',
-			},
 			active: false,
+			controls: {
+				up: 'Z',
+				down: 'S',
+				left: 'Q',
+				right: 'D',
+				shift: 'SHIFT',
+				space: 'SPACE',
+			},
 		}
 
 		this.controls.add(config);
@@ -139,17 +170,25 @@ export default class levelScene extends Phaser.Scene {
 		else if(this.controls.keys.right.isDown) {
 			this.player.x += 4;
 		}
-
-		//if(this.controls.keys.space.isDown) {
-		//    // do something
-		//}
-		//else if(this.controls.keys.attack.isDown) {
-		//    // do something else
-		//}
 	}
 		</code></pre>
 	</div>
 	<div id="comboExample">
+		<h3>Combo Config</h3>
+		<pre><code class="language-javascript" style="font-size:1rem;">
+// config options
+const comboConfig = {
+	combo: 'AA', // the combo to use
+	name: '', // optional - name to reference by if needed
+	data: {}, // optional - data to pass into the combo event
+	resetOnMatch: true, // optional - reset the combo on match, default false
+	maxKeyDelay: 450, // optional - the delay between key presses, if longer then it resets the combo, default 0
+	deleteOnMatch: false, // optional - delete the combo when the combo is complete, default false
+	schemes: ['myControlScheme1', 'controlScheme2'], // optional - control schemes that use this combo, default ['global']
+	onMatch: function(scene, event) {}, // function to call when the combo is a match
+	onMatchOnce: function(scene, event) {} // Same as onMatch but only runs once
+}
+		</code></pre>
 		<h3>Combo Example</h3>
 		<pre><code class="language-javascript" style="font-size:1rem;">
 let basicExample = this.controls.createCombo({
@@ -158,6 +197,23 @@ let basicExample = this.controls.createCombo({
 		console.log('Combo AA Fired!')
 	}
 })
+
+let basicExample2 = this.controls.createCombo({
+	combo: 'DD',
+	resetOnMatch: true,
+	onMatchOnce: function() {
+		console.log('Combo DD Fired Once!')
+	}
+})
+
+// create a combo that only works if 'yourcontrolscheme' is active
+let dashLeftWasd = this.controls.createCombo({ 
+    combo: 'AA',
+    schemes: ['yourcontrolscheme'],
+    onMatch: function(scene) {
+        scene.player.x -= 100;
+    }
+});
 
 let dashLeft = this.controls.createCombo({ 
 	name: 'dashLeft',
@@ -196,6 +252,121 @@ this.controls.createKonamiCode(function(){
 });
 		</code></pre>
 	</div>
+	<h3 id="examples">Examples</h3>
+
+	<h4 id="addnewcontrolscheme">Add new control scheme:</h4>
+	
+	<pre><code class="javascript language-javascript">
+this.controls.add({
+	name: 'azerty',
+	active: false,
+	controls: {
+		up: 'Z',
+		down: 'S',
+		left: 'Q',
+		right: 'D',
+		shift: 'SHIFT',
+		space: 'SPACE',
+	},
+});
+	</code></pre>
+	
+	<h4 id="addmultiplecontrolschemes">Add multiple control schemes</h4>
+	
+	<pre><code class="javascript language-javascript">
+let array = [
+	{config},
+	{config},
+	{config},
+];
+
+this.controls.addMultiple(array);
+	</code></pre>
+	
+	<h4 id="accesscontrols">Access Controls</h4>
+	
+	<pre><code class="javascript language-javascript">
+this.controls.keys
+// this.controls.keys.up.isDown
+// this.controls.keys.down.isDown
+// this.controls.keys.left.isDown
+// this.controls.keys.right.isDown
+	</code></pre>
+	
+	<h4 id="accesscontrolschemes">Access Control Schemes</h4>
+	
+	<pre><code class="javascript language-javascript">// returns schemes array with all saved control schemes
+this.controls.getAll();
+	</code></pre>
+	
+	<h4 id="createwasdkeyswasdshiftspaceorcursorkeysupdownleftrightshiftspace">Create WASD keys (w,a,s,d, shift, space) or CURSOR keys (up, down, left, right, shift, space)</h4>
+	
+	<pre><code class="javascript language-javascript">
+// options
+// active - (default false) set this scheme to active (this overrides the current active control scheme)
+// add - (to schemes array0 - (default true) adds this control scheme to to the schemes array
+// data - optional data to pass to this control scheme
+// onActive (scene, scheme) - optional function to call when this control scheme is set active
+
+this.controls.createWasdKeys();
+// cursor keys set active, add to schemes array, pass no data, add onActive function
+this.controls.createCursorKeys(true, true, null, function(scene, scheme){
+	console.log('Cursor Keys is active!');
+});
+	</code></pre>
+	
+	<h4 id="getcontrolschemeobject">Get control scheme object</h4>
+	
+	<pre><code class="javascript language-javascript">
+// get scheme object. Leave blank to get the active control scheme
+let scheme = this.controls.get('azerty');
+// returns - {name: "azerty", controls: {…}, active: false}
+
+// get the active control scheme, set to true to return only the control scheme name string 
+let currentScheme = this.controls.getActive();
+	</code></pre>
+	
+	<h4 id="selectcontrolschemetouse">Select control scheme to use</h4>
+	
+	<pre><code class="javascript language-javascript">
+// scheme - pass in either the control scheme name string or object
+this.controls.setActive(scheme);
+	</code></pre>
+	
+	<p>Or</p>
+	
+	<pre><code class="javascript language-javascript">
+// scheme - pass in either the control scheme name string or object
+this.controls.switch(scheme);
+	</code></pre>
+	
+	<h4 id="editcontrolscheme">Edit control scheme</h4>
+	
+	<pre><code class="javascript language-javascript">
+let getScheme = this.controls.get('azerty');
+// scheme (object || string) - pass in control scheme to edit
+// config (object) - config to replace chosen control scheme
+this.controls.edit(getScheme, {
+	name: 'azertyEdit',
+	active: false,
+	controls: {
+		up: 'Z',
+		down: 'S',
+		left: 'Q',
+		right: 'D',
+		shift: 'SHIFT',
+		space: 'SPACE',
+	},
+})
+	</code></pre>
+	
+	<h4 id="deletecontrolscheme">Delete control scheme</h4>
+	<pre><code class="javascript language-javascript">
+// delete control scheme
+// scheme - pass in either control scheme name string or object
+// destroy - ( &gt;= phaser v3.16) - boolean, removes keys and removes captures
+this.controls.delete(scheme, destroy);
+	</code></pre>
 </div>
 
 <script src="assets/prism.js"></script>

@@ -34,22 +34,25 @@ export default class basicScene extends Phaser.Scene {
         // add new control scheme
         const config = {
             name: 'azertyKeys',
-            controls: {
-            up: 'Z',
-            down: 'S',
-            left: 'Q',
-            right: 'D',
-            shift: 'SHIFT',
-            space: 'SPACE',
-            },
             active: false,
+            controls: {
+                up: 'Z',
+                down: 'S',
+                left: 'Q',
+                right: 'D',
+                shift: 'SHIFT',
+                space: 'SPACE',
+            },
+            onActive(scene, scheme) {
+                console.log(scheme.name + ' is active!');
+            }
         }
         this.controls.add(config);
 
         // Setup debug controls text
         // click on text to switch to next control scheme
         // x, y, font-size
-        this.controls.debugText(225, 245, 18, '#000000');
+        this.controls.debugText(225, 225, 18, '#000000');
 
         this.controls.createKonamiCode(function(){
             window.alert('30+ Lives!');

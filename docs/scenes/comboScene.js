@@ -27,6 +27,19 @@ export default class comboScene extends Phaser.Scene {
         this.sceneText3 = this.add.text(400, 120, controlText, {fontFamily: 'Verdana', fontSize: 20, color: '#000000'}).setOrigin(0.5, 0.5);
 
 
+        const basicExample = this.controls.createCombo({
+            combo: 'AA',
+            resetOnMatch: true,
+            onMatch: function(scene, event) {
+                console.log('I run every time this combo matches!')
+            },
+            onMatchOnce: function(scene, event) {
+                console.log('I only run once!');
+            }
+        });
+
+        
+
         let dashLeft = this.controls.createCombo({ 
             name: 'dashLeft',
             combo: [37, 37],
