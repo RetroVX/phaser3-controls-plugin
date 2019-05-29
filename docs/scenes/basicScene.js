@@ -77,5 +77,7 @@ export default class basicScene extends Phaser.Scene {
         else if(this.controls.keys.right.isDown) {
             this.player.x += 4;
         }
+
+        //console.log(this.controls.captureKeys());
     }
 }

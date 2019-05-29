@@ -8,6 +8,7 @@ const config = {
   width: 800,
   height: 400,
   parent: "gameCanvas",
+  resolution: 1.2,
   dom: {
     createContainer: true
   },

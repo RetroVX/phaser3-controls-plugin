@@ -29,15 +29,13 @@
             <pre class="prettyprint source linenums"><code>/**
  * @author Conor Irwin &lt;conorirwin.co.uk> 
  * @classdesc 
- * GitHub: https://github.com/retroVX/phaser3-controls &lt;br>
+ * GitHub: https://github.com/retroVX/phaser3-controls-plugin &lt;br>
  * A simple plugin to assist with creating control schemes with keyboard inputs for Phaser (3) &lt;br>
- * @example 
- * this.controls = new phaserControls(this);
- * @version: 1.3.1
+ * @version: 1.5.0
  * @class phaserControls
  * @extends Phaser.Plugins.ScenePlugin
  * @param {Phaser.Scene} scene - The Scene the phaserControls will be created in (this)
- * @param {Phaser.pluginManager}
+ * @param {Phaser.pluginManager} pluginManager - Phaser plugin manager
  */
 
 export default class phaserControls extends Phaser.Plugins.ScenePlugin {
@@ -51,7 +49,7 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
          * @name phaserControls.scene
          * @type {Object}
          * @since 1.0.0
-         */
+        */
 
         this.scene = scene;
 
@@ -61,7 +59,7 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
          * @name phaserControls.schemes
          * @type {Array}
          * @since 1.0.0
-         */  
+        */  
 
         this.schemes = [];
 
@@ -71,26 +69,66 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
          * @name phaserControls.keys
          * @type {Object}
          * @since 1.0.0
-         */ 
+        */ 
 
         this.keys = null;
 
 
         /**
+         * Holds all inputs recorded with phaserControls.recordKeys
+         * @name phaserControls.inputArray
+         * @since 1.5.0
+         */
+        this.inputArray = [];
+
+
+        /**
          * Key Combo Match event
          * @since 1.3.0
-         */
+        */
 
         this.scene.input.keyboard.on('keycombomatch', function (event, key, data) {
             for(let i = 0; i &lt; event.schemes.length; i++) {
 
                 if(event.schemes[0] === 'global' || this.getActive().name === event.schemes[i]) {
-                    event.onMatch(this.scene);
+
+                    // run onMatch function
+                    if(event.onMatch !== undefined) {
+                        event.onMatch(this.scene, event);
+                    }
+
+                    // run onMatchOnce if function passed in and counter is 0
+                    if(event.counter === 0 &amp;&amp; event.onMatchOnce !== undefined) {
+                        event.onMatchOnce(this.scene, event);
+                    }
+
+                    // increase counter
+                    event.counter += 1;
                 }
             }
 
         }, this);
 
+    }
+
+
+    /**
+     * boot function for plugin, setup event handlers
+     */
+
+    boot() {
+        const eventEmitter = this.systems.events;
+        eventEmitter.once('destroy', function(){
+            // remove everything
+            for(let i = 0; i &lt; this.schemes.length; i++) {
+                this.delete(this.schemes[i], true);
+            }
+
+            this.scene = null;
+            this.schemes = null;
+            this.keys = null;
+
+        }, this);
     }
 
 
@@ -102,19 +140,21 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
     * @type {function}
     * @param {boolean} [active=false] - If the cursor keys should be used, overiding current scheme
     * @param {boolean} [add=true] - add the default cursor keys to the schemes list
+    * @param {object} data - optional data to pass into the control scheme
+    * @param {function} onActiveFunc - optional function to call whenever this control scheme is set to active
     * @since 1.0.0
     */
 
-    createCursorKeys(active, add) {
+    createCursorKeys(active, add, data, onActiveFunc) {
         // make sure 'add' &amp; 'active' are not undefined
-        if (this.cursorKeys !== undefined) return console.log('Cursor Keys already created!');
         if (active === undefined || active === null) active = false;
         if (add === undefined || add === null) add = true;
+        if (data === undefined || data === null) data = {},
+
         // scheme
         this.cursorKeys = {
-
             name: 'cursorKeysDefault',
-
+            active: active,
             controls: {
                 up: 'UP',
                 down: 'DOWN',
@@ -123,8 +163,12 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
                 shift: 'SHIFT',
                 space: 'SPACE'
             },
-
-            active: active,
+            data: data,
+            onActive: function(scene, scheme) {
+                if(onActiveFunc !== undefined) {
+                    onActiveFunc(scene, scheme);
+                }
+            }
         }
         // if true add to list of schemes
         if (add) {
@@ -145,19 +189,21 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
     * @type {function}
     * @param {boolean} [active=false] - If the wasd keys should be used, overiding current scheme
     * @param {boolean} [add=true] - add the default wasd keys to the schemes list
+    * @param {object} data - optional data to pass into the control scheme
+    * @param {function} onActiveFunc - optional function to call whenever this control scheme is set to active
     * @since 1.0.0
     */
   
-    createWasdKeys(active, add) {
+    createWasdKeys(active, add, data, onActiveFunc) {
         // make sure 'add' &amp; 'active' are not undefined
-        if (this.wasdKeys !== undefined) return console.log('WASD Keys already created!');
         if (active === undefined || active === null) active = false;
         if (add === undefined || add === null) add = true;
+        if (data === undefined || data === null) data = {},
+
         // scheme
         this.wasdKeys = {
-
             name: 'wasdKeysDefault',
-
+            active: active,
             controls: {
                 up: 'W',
                 down: 'S',
@@ -166,8 +212,12 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
                 shift: 'SHIFT',
                 space: 'SPACE'
             },
-
-            active: active,
+            data: data,
+            onActive: function(scene, scheme) {
+                if(onActiveFunc !== undefined) {
+                    onActiveFunc();
+                }
+            }
         }
 
         // if true add to list of schemes
@@ -192,6 +242,7 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
     */
 
     add(config) {
+        if(config.data === undefined || config.data === null) config.data = {};
         // add new control scheme
         this.schemes.push(config);
 
@@ -296,19 +347,16 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
 
     /**
      * Switch from one control scheme to another  
-     * Alternative way of get().setActive();
+     * Alternative way of setActive();
      * @method phaserControls.switch
      * @type {function}
-     * @param {(string|Object)} oldScheme - the current scheme being used
-     * @param {(string|object)} newScheme - the control scheme to switch to
+     * @param {(string|object)} scheme - the control scheme to switch to
      * @since 1.1.0
     */
    
-    switch(oldScheme, newScheme) {
-        if (newScheme === undefined || newScheme === null) return console.error('phaserControls.switch : Parameter "newScheme" is undefined');
-
+    switch(scheme) {
         // setActive will automatically switch the old and new schemes
-        this.setActive(newScheme);
+        this.setActive(scheme);
     }
 
 
@@ -335,9 +383,12 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
             }
         });
 
+        if(getNewScheme.onActive !== undefined) {
+            getNewScheme.onActive(scene, getNewScheme);
+        }
+
         // set new keys
         this.keys = scene.input.keyboard.addKeys(getNewScheme.controls);
-        this.keys.name = getNewScheme.name;
     }
 
 
@@ -366,13 +417,14 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
     * @method phaserControls.delete
     * @type {function}
     * @param {(string|object)} scheme - The scheme name to find and delete
-    * @param {boolean} destroy - Removes keys and captures used by scheme (phaser version >= 3.16)
+    * @param {boolean} [destroy=true] - Removes keys and captures used by scheme (phaser version >= 3.16)
     * @since 1.0.0
     */
 
     delete(scheme, destroy) {
+        if(destroy === undefined || destroy === null) destroy = true;
         const scene = this.scene;
-        let schemesArray = this.schemes;
+        let schemesArray = this.getAll();
         let nextScheme = false;
         let currentControls = Object.keys(this.keys);
 
@@ -430,15 +482,19 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
         combo.data = scheme.data;
         // function to call when combo matches
         combo.onMatch = scheme.onMatch;
+        // function to call when combo matches once
+        combo.onMatchOnce = scheme.onMatchOnce;
         // combo will only work if a specific control scheme is being used
         combo.schemes = scheme.schemes;
+        // counter for onMatchOnce
+        combo.counter = 0;
 
         return combo;
     }
 
 
     /**
-     * Create the Konami Code (up,up,down,down,left,left,right,right,b,a)
+     * Create the Konami Code (up,up,down,down,left,right,left,right,b,a)
      * @method phaserControls.createKonamiCode
      * @type {function}
      * @param {Function} onMatch - function to call when konami code has been entered
@@ -449,14 +505,142 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
     createKonamiCode(onMatch) {
         const scene = this.scene;
 
-        const konamiCode = [38, 38, 40, 40, 37, 37, 39, 39, 66, 65];
+        const konamiCode = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
 
+        // create the konami code
         let konamiCombo = scene.input.keyboard.createCombo(konamiCode);
         konamiCombo.name = 'konamiCode';
         konamiCombo.onMatch = onMatch;
         konamiCombo.schemes = ['global'];
 
         return konamiCombo;
+    }
+
+
+    /**
+     * record which key was pressed down, for how long and the timestamp when the key was down &lt;br> 
+     * @method phaserControls.recordKeys
+     * @type {function}
+     * @return {array} returns the array holding the input objects
+     * @since 1.5.0
+     */
+
+    recordKeys() {
+        const scene = this.scene;
+        // get the active scheme to capture the key
+        const scheme = this.getActive();
+        // get active keys
+        const keys = this.keys;
+        // array to hold the inputs
+        const inputArray = this.inputArray;
+        // convert keys object to an array to get each key
+        let currentControls = Object.keys(keys);
+
+        // loop through the active keys
+        currentControls.forEach(function (key) {
+            
+            // when the key is released, record the key string ('LEFT'), keycode (37), duration the key was down (530ms)
+            // and the timestamp of when the key was down (5340.33) into an object and push into the inputArray
+            if(Phaser.Input.Keyboard.JustUp(keys[key])) {
+                let inputObj = {
+                    keyCode: keys[key].keyCode,
+                    key: scheme.controls[key],
+                    duration: keys[key].duration,
+                    lastDown: keys[key].timeDown
+                }
+                inputArray.push(inputObj);
+            }
+
+        }, this);
+
+        // return the array
+        return inputArray;
+    }
+
+
+    /**
+     * Helper function to enable all the keys for the active control scheme
+     * @method phaserControls.enableKeys
+     * @type {function}
+     * @since 1.5.0
+     */
+
+    enableKeys() {
+        const scene = this.scene;
+        // convert keys object to an array to get each key
+        let currentControls = Object.keys(this.keys);
+
+        currentControls.forEach(function (key) {
+            this.keys[key].enabled = true;
+        }, this);
+
+    }
+
+
+    /**
+     * Helper function to disable all the keys for the active control scheme
+     * @method phaserControls.disableKeys
+     * @type {function}
+     * @since 1.5.0
+     */
+
+    disableKeys() {
+        const scene = this.scene;
+        // convert keys object to an array to get each key
+        let currentControls = Object.keys(this.keys);
+
+        currentControls.forEach(function (key) {
+            this.keys[key].enabled = false;
+        }, this);
+
+    }
+
+
+    /**
+     * Helper function to convert a keyCode either from phaser keyboard or from window event to the phaser key string
+     * @method phaserControls.keyCodeToKey
+     * @type {function}
+     * @param {(number|array)} keyCode - the keyCode to convert or an array of keyCodes to convert
+     * @return {(string|array)} Returns the key name or an array of key names
+     * @since 1.5.0
+     */
+    keyCodeToKey(keyCode) {
+        // get the keys and values from Phaser.Input.Keyboard.KeyCodes
+        const phaserKeyNames = Object.keys(Phaser.Input.Keyboard.KeyCodes);
+        const phaserKeyCodes = Object.values(Phaser.Input.Keyboard.KeyCodes);
+
+        let keyCodeIsArray = false;
+        // the array to hold the converted keyCodes if keyCodeIsArray is true
+        let keyArray = [];
+        // the new key string to return if the paramter keyCode is a number 
+        let newKey;
+        // check if paramter is an array or just a number
+        if(keyCode instanceof Array) keyCodeIsArray = true;
+
+        phaserKeyCodes.forEach(function(key, index) {
+            // if the keyCode parameter is an array, loop through the array and convert to key names
+            if(keyCodeIsArray) {
+                // loop through the passed in array
+                keyCode.forEach(function(kCode){
+                    if(kCode === key) {
+                        keyArray.push(phaserKeyNames[index]);
+                    }
+                })
+            }
+            // if keyCode is a number then convert the keyCode to a key name
+            if(!keyCodeIsArray &amp;&amp; keyCode === key) {
+                // update newKey
+                newKey = phaserKeyNames[index];
+            }
+        }, this);
+
+        // return an array or number depending on the parameter type
+        if(keyCodeIsArray) {
+            return keyArray;
+        }
+        else {
+            return newKey;
+        }
     }
 
 
@@ -480,15 +664,15 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
         let scheme = this.getActive();
 
         // create the text to display the control schemes
-        this.controlsText = scene.add.text(x, y, 'Click text to change the control scheme. \n \n' + JSON.stringify(scheme, undefined, 2), {
+        let controlsText = scene.add.text(x, y, 'Click text to change the control scheme. \n \n' + JSON.stringify(scheme, undefined, 2), {
             fontFamily: 'Verdana',
             fontSize: fontsize,
             color: color
         }).setOrigin(0.5, 0.5);
         // add setInteractive on text so we can click on the text
-        this.controlsText.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.controlsText.width, this.controlsText.height), Phaser.Geom.Rectangle.Contains);
+        controlsText.setInteractive(new Phaser.Geom.Rectangle(0, 0, controlsText.width, controlsText.height), Phaser.Geom.Rectangle.Contains);
         // when text is clicked on then display and set to active the next control scheme
-        this.controlsText.on('pointerdown', function (pointer) {
+        controlsText.on('pointerdown', function (pointer) {
             if (i &lt; this.schemes.length - 1) {
                 i++;
             } else {
@@ -497,7 +681,7 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
             scheme = this.schemes[i];
             // update text and control scheme
             this.setActive(this.schemes[i].name);
-            this.controlsText.setText('Click text to change the control scheme. \n \n' + JSON.stringify(scheme, undefined, 2));
+            controlsText.setText('Click text to change the control scheme. \n \n' + JSON.stringify(scheme, undefined, 2));
         }, this);
     }
 }
@@ -511,13 +695,13 @@ export default class phaserControls extends Phaser.Plugins.ScenePlugin {
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="phaserControls.html">phaserControls</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="phaserControls.html">phaserControls</a></li></ul><h3>Global</h3><ul><li><a href="global.html#boot">boot</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu May 23 2019 22:08:17 GMT+0100 (British Summer Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed May 29 2019 21:41:39 GMT+0100 (British Summer Time)
 </footer>
 
 <script> prettyPrint(); </script>

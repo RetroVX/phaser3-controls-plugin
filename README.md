@@ -9,6 +9,10 @@ https://retrovx.github.io/phaser3-controls-plugin/
 
 ## Getting Started
 
+### Prerequisites
+
+* Phaser 3.16 +
+
 ### Install
 
 ```
@@ -207,6 +211,18 @@ this.controls.edit(getScheme, {
 this.controls.delete(scheme, destroy);
 ```
 
+#### Enable Keys
+```javascript
+// enables keys from active control scheme
+this.controls.enableKeys();
+```
+
+#### Disable Keys
+```javascript
+// disables keys from active control scheme
+this.controls.disableKeys();
+```
+
 #### Create a key combo
 Basic Example:  
 ```javascript
@@ -251,6 +267,22 @@ this.controls.createKonamiCode(function(scene){
 });
 ```
 
+#### Record Player Key Inputs
+```javascript
+// use inside the update() function
+this.controls.recordKeys();
+// returns an array with an object for each key pressed
+// the object contains - key, keyCode, duration the key was down, timestamp of when the key was down
+```
+
+#### Convert a keyCode to a Key
+```javascript
+// a helper function to input a keyCode or an array of keyCodes and convert them to phaser key strings
+this.controls.keyCodeToKey(37);
+// returns - 'LEFT'
+this.controls.keyCodeToKey([37, 39]);
+// returns - ['LEFT', 'RIGHT']
+```
 
 #### Debug control scheme text
 ```javascript
