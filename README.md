@@ -1,7 +1,6 @@
 # Phaser 3 Controls Plugin
 
-A simple plugin to assist with creating control schemes with keyboard inputs for Phaser 3
-
+A simple plugin to assist with creating control schemes and combos with keyboard inputs for Phaser 3
 
 ### Demo
 
